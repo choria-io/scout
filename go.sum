@@ -65,6 +65,8 @@ github.com/choria-io/go-choria v0.15.1-0.20200705201247-16fd45e4f2ee h1:253/nRJN
 github.com/choria-io/go-choria v0.15.1-0.20200705201247-16fd45e4f2ee/go.mod h1:D4iKjMno5rpu8evoFFhy0UTmcLY9P0GaOGGuruajUD8=
 github.com/choria-io/go-choria v0.15.1-0.20200705204529-3da9d38e509d h1:smtI7OEEtyOIZhyz8XF39F9Qb1gaZgeUZnKdGUcRGS8=
 github.com/choria-io/go-choria v0.15.1-0.20200705204529-3da9d38e509d/go.mod h1:D4iKjMno5rpu8evoFFhy0UTmcLY9P0GaOGGuruajUD8=
+github.com/choria-io/go-choria v0.15.1-0.20200706080802-a013c6fa750a h1:ljuLtU2+aWngw53h8+ncL1L8vC5pvIRWzokPWyxg2m0=
+github.com/choria-io/go-choria v0.15.1-0.20200706080802-a013c6fa750a/go.mod h1:D4iKjMno5rpu8evoFFhy0UTmcLY9P0GaOGGuruajUD8=
 github.com/choria-io/go-updater v0.0.3 h1:lGUG5DHV/HTl4bRwUY8t1MFuWKPosVRRJWkBF6y1z88=
 github.com/choria-io/go-updater v0.0.3/go.mod h1:IK696pPQUWx7S/MZYckzPrG2hpDyV/Pkn46JS1n4rIw=
 github.com/choria-io/provisioning-agent v0.6.1-0.20200207105902-ddd40939efcf/go.mod h1:Nrvth8vuI8Ke75hoT8bUC1sx1LajwsmKru4XM+WWadQ=

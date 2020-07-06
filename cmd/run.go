@@ -114,6 +114,7 @@ func (c *runCommand) configure() error {
 		return fmt.Errorf("could not find configuration file %q and provisioning is not enabled", cfile)
 	}
 
+	cfg.MainCollective = "scout"
 	cfg.ApplyBuildSettings(bi)
 	cfg.DisableSecurityProviderVerify = true
 	cfg.InitiatedByServer = true
