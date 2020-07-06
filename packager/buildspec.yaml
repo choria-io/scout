@@ -1,0 +1,147 @@
+flags_map:
+  TLS: github.com/choria-io/go-choria/build.TLS
+  maxBrokerClients: github.com/choria-io/go-choria/build.maxBrokerClients
+  Secure: github.com/choria-io/go-choria/protocol.Secure
+  Version: github.com/choria-io/go-choria/build.Version
+  SHA: github.com/choria-io/go-choria/build.SHA
+  BuildTime: github.com/choria-io/go-choria/build.BuildDate
+  ProvisionBrokerURLs: github.com/choria-io/go-choria/build.ProvisionBrokerURLs
+  ProvisionModeDefault: github.com/choria-io/go-choria/build.ProvisionModeDefault
+  ProvisionAgent: github.com/choria-io/go-choria/build.ProvisionAgent
+  ProvisionSecure: github.com/choria-io/go-choria/build.ProvisionSecure
+  ProvisionRegistrationData: github.com/choria-io/go-choria/build.ProvisionRegistrationData
+  ProvisionFacts: github.com/choria-io/go-choria/build.ProvisionFacts
+  ProvisionToken: github.com/choria-io/go-choria/build.ProvisionToken
+  ProvisionJWTFile: github.com/choria-io/go-choria/build.ProvisionJWTFile
+  ProvisioningBrokerUsername: github.com/choria-io/go-choria/build.ProvisioningBrokerUsername
+  ProvisioningBrokerPassword: github.com/choria-io/go-choria/build.ProvisioningBrokerPassword
+
+foss:
+  compile_targets:
+    defaults:
+      output: scout-{{version}}-{{os}}-{{arch}}
+      flags:
+        ProvisionJWTFile: /etc/scout/provisioning.jwt
+      pre:
+        - rm additional_agent_*.go || true
+        - rm plugin_*_*.go || true
+        - go generate
+
+    64bit_linux:
+      os: linux
+      arch: amd64
+
+    32bit_linux:
+      os: linux
+      arch: 386
+
+    armv5_linux:
+      output: scout-{{version}}-{{os}}-{{arch}}v{{arm}}
+      os: linux
+      arch: arm
+      arm: 5
+
+    armv7_linux:
+      output: scout-{{version}}-{{os}}-{{arch}}v{{arm}}
+      os: linux
+      arch: arm
+      arm: 7
+
+    darwin:
+      os: darwin
+      arch: amd64
+
+    # can probably not be built on an actual windows machine
+    64bit_windows:
+      flags:
+        ProvisionJWTFile: C:\ProgramData\Scout\etc\provisioning.jwt
+      output: scout-{{version}}-{{os}}-{{arch}}.exe
+      os: windows
+      arch: amd64
+      pre:
+        - rm plugin_*_*.go || true
+        - GOOS=linux GOARCH=amd64 go generate
+
+  packages:
+    defaults:
+      name: scout
+      display_name: Scout
+      bindir: /usr/bin
+      etcdir: /etc/scout
+      release: 1
+      manage_conf: 1
+      contact: R.I.Pienaar <rip@devco.net>
+      rpm_group: System Environment/Base
+      server_start_runlevels: "-"
+      server_start_order: 50
+      broker_start_runlevels: "-"
+      broker_start_order: 50
+
+    el6_32:
+      template: el/el6
+      dist: el6
+      target_arch: i686
+      binary: 32bit_linux
+
+    el6_64:
+      template: el/el6
+      dist: el6
+      target_arch: x86_64
+      binary: 64bit_linux
+
+    el7_32:
+      template: el/el7
+      dist: el7
+      target_arch: i686
+      binary: 32bit_linux
+
+    el7_64:
+      template: el/el7
+      dist: el7
+      target_arch: x86_64
+      binary: 64bit_linux
+
+    el8_64:
+      template: el/el8
+      dist: el8
+      target_arch: x86_64
+      binary: 64bit_linux
+
+    xenial_64:
+      template: debian/generic
+      target_arch: x86_64-linux-gnu
+      binary: 64bit_linux
+
+    stretch_64:
+      template: debian/generic
+      target_arch: x86_64-linux-gnu
+      binary: 64bit_linux
+
+    bionic_64:
+      template: debian/generic
+      target_arch: x86_64-linux-gnu
+      binary: 64bit_linux
+
+    buster_64:
+      template: debian/generic
+      target_arch: x86_64-linux-gnu
+      binary: 64bit_linux
+
+    buster_armel:
+      template: debian/generic
+      target_arch: arm-linux-gnu
+      binary: armv5_linux
+
+    buster_armhf:
+      template: debian/generic
+      target_arch: arm-linux-gnueabihf
+      binary: armv7_linux
+
+    windows_64:
+      name: Scout
+      display_name: Choria Scout
+      template: windows/64bit
+      binary: 64bit_windows
+      bindir: bin
+      etcdir: etc
+      target_arch: x86_64-windows

@@ -44,7 +44,7 @@ func Run() error {
 	scli.Version(bi.Version())
 	scli.HelpFlag.Short('h')
 
-	scli.Flag("config", "Path to the configuration file").StringVar(&cfile)
+	scli.Flag("config", "Path to the configuration file").ExistingFileVar(&cfile)
 	scli.Flag("debug", "Enables debug level logging").BoolVar(&debug)
 
 	configureRunCommand(scli)

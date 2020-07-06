@@ -1,3 +1,7 @@
 scout
 .idea
-plugin_*.go
+plugin_*_*.go
+scout-*-*-*
+*.rpm
+*.deb
+*.dsc
