@@ -1,3 +1,4 @@
 ---
 golangmco: github.com/choria-io/go-choria/providers/agent/mcorpc/golang
 choria_provision: github.com/choria-io/provisioning-agent/agent
+scout: github.com/choria-io/go-choria/scout/agent/scout
