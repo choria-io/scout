@@ -14,7 +14,7 @@
 Name: %{pkgname}
 Version: %{version}
 Release: %{release}.%{dist}
-Summary: The Choria Orchestrator Server
+Summary: Choria Scout Monitoring Framework
 License: Apache-2.0
 URL: https://choria.io
 Group: %{pkggroup}
@@ -23,7 +23,7 @@ Packager: %{contact}
 BuildRoot: %{_tmppath}/%{pkgname}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-The Choria Orchestrator Server and Broker
+The Choria Scout Monitoring Framework
 
 Please visit https://choria.io for more information
 
@@ -40,14 +40,11 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}%{bindir}
 %{__install} -d -m0755  %{buildroot}%{etcdir}
 %{__install} -d -m0755  %{buildroot}/var/log
-%{__install} -m0755 dist/server.init %{buildroot}/etc/rc.d/init.d/%{pkgname}-server
-%{__install} -m0755 dist/broker.init %{buildroot}/etc/rc.d/init.d/%{pkgname}-broker
-%{__install} -m0644 dist/server.sysconfig %{buildroot}/etc/sysconfig/%{pkgname}-server
-%{__install} -m0644 dist/broker.sysconfig %{buildroot}/etc/sysconfig/%{pkgname}-broker
-%{__install} -m0755 dist/choria-logrotate %{buildroot}/etc/logrotate.d/%{pkgname}
+%{__install} -m0755 dist/agent.init %{buildroot}/etc/rc.d/init.d/%{pkgname}-agent
+%{__install} -m0644 dist/agent.sysconfig %{buildroot}/etc/sysconfig/%{pkgname}-agent
+%{__install} -m0755 dist/agent-logrotate %{buildroot}/etc/logrotate.d/%{pkgname}
 %if 0%{?manage_conf} > 0
-%{__install} -m0640 dist/server.conf %{buildroot}%{etcdir}/server.conf
-%{__install} -m0640 dist/broker.conf %{buildroot}%{etcdir}/broker.conf
+%{__install} -m0640 dist/scout.conf %{buildroot}%{etcdir}/scout.conf
 %endif
 %{__install} -m0755 %{binary} %{buildroot}%{bindir}/%{pkgname}
 
@@ -55,35 +52,28 @@ rm -rf %{buildroot}
 rm -rf %{buildroot}
 
 %post
-/sbin/chkconfig --add %{pkgname}-broker || :
-/sbin/chkconfig --add %{pkgname}-server || :
+/sbin/chkconfig --add %{pkgname}-agent || :
 
 %postun
 if [ "$1" -ge 1 ]; then
-  /sbin/service %{pkgname}-broker condrestart &>/dev/null || :
-  /sbin/service %{pkgname}-server condrestart &>/dev/null || :
+  /sbin/service %{pkgname}-agent condrestart &>/dev/null || :
 fi
 
 %preun
 if [ "$1" = 0 ] ; then
-  /sbin/service %{pkgname}-broker stop > /dev/null 2>&1
-  /sbin/chkconfig --del %{pkgname}-broker || :
-  /sbin/service %{pkgname}-server stop > /dev/null 2>&1
-  /sbin/chkconfig --del %{pkgname}-server || :
+  /sbin/service %{pkgname}-agent stop > /dev/null 2>&1
+  /sbin/chkconfig --del %{pkgname}-agent || :
 fi
 
 %files
 %if 0%{?manage_conf} > 0
-%config(noreplace)%{etcdir}/broker.conf
-%config(noreplace)%{etcdir}/server.conf
+%config(noreplace)%{etcdir}/scout.conf
 %endif
 %{bindir}/%{pkgname}
 /etc/logrotate.d/%{pkgname}
-/etc/rc.d/init.d/%{pkgname}-server
-%config(noreplace)/etc/sysconfig/%{pkgname}-server
-/etc/rc.d/init.d/%{pkgname}-broker
-%config(noreplace)/etc/sysconfig/%{pkgname}-broker
+/etc/rc.d/init.d/%{pkgname}-agent
+%config(noreplace)/etc/sysconfig/%{pkgname}-agent
 
 %changelog
-* Tue Dec 05 2017 R.I.Pienaar <rip@devco.net>
+* Tue Jul 07 2020 R.I.Pienaar <rip@devco.net>
 - Initial Release

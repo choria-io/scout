@@ -1,37 +1,40 @@
 #!/bin/bash
 #
-# Init script for {{cpkg_name}}-broker
+# Init script for {{cpkg_name}}-agent
 #
 ### BEGIN INIT INFO
-# Provides:          {{cpkg_name}}-broker
+# Provides:          {{cpkg_name}}-agent
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
-# chkconfig:         {{cpkg_broker_start_runlevels}} {{cpkg_broker_start_order}} {{cpkg_broker_start_order}}
-# Short-Description: Choria.IO Orchestration System Network Broker
-# Description:       NATS based middleware, Federation Broker and Protocol Adapter for Choria.IO
+# Short-Description: Choria Scout Monitoring Framework
+# Description:       Agent for the Choria Scout Monitoring Framework
+# chkconfig:         {{cpkg_agent_start_runlevels}} {{cpkg_agent_start_order}} {{cpkg_agent_start_order}}
 ### END INIT INFO
 
 # source function library
 . /etc/rc.d/init.d/functions
 
-prog="{{cpkg_name}}-broker"
+prog="{{cpkg_name}}-agent"
 user="root"
 exec="{{cpkg_bindir}}/{{cpkg_name}}"
 pidfile="/var/run/${prog}.pid"
 lockfile="/var/lock/subsys/${prog}"
 logfile="/var/log/${prog}"
-conffile="{{cpkg_etcdir}}/broker.conf"
+conffile="{{cpkg_etcdir}}/scout.conf"
 
-# set the open file limit to allow over 1024 connections
-ulimit -n 51200
+COMMAND_PREFIX=""
+EXTRA_OPTS=""
 
 # pull in sysconfig settings
 [ -e /etc/sysconfig/${prog} ] && . /etc/sysconfig/${prog}
 
-args="broker --config=${conffile} --pid=${pidfile} ${EXTRA_OPTS}"
+args="run --config=${conffile} --pid=${pidfile} ${EXTRA_OPTS}"
+
+export GOMAXPROCS=${GOMAXPROCS:-2}
 
 start() {
     [ -x $exec ] || exit 5
+
     [ -f $conffile ] || exit 6
     [ -d $confdir ] || exit 6
 
@@ -43,7 +46,7 @@ start() {
 
     daemon \
       --pidfile=${pidfile} \
-      " { nohup ${exec} ${args} > ${logfile} 2>&1 & }"
+      " { nohup ${COMMAND_PREFIX} ${exec} ${args} > ${logfile} 2>&1 & } ; sleep 0.5 ; [ -f ${pidfile} ]"
 
     RETVAL=$?
     echo

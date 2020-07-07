@@ -50,8 +50,16 @@ func (c *runCommand) run(_ *kingpin.ParseContext) error {
 		return err
 	}
 
-	// TODO: requires provisioner updates
-	// instance.SetComponent("scout")
+	switch fw.ProvisionMode() {
+	case true:
+		// TODO: needs provisioner updates
+		// instance.SetComponent("provision_mode_scout")
+	case false:
+		instance.DenyAgent("rpcutil")
+
+		// TODO: needs provisioner updates
+		// instance.SetComponent("scout")
+	}
 
 	// prevent machines from starting till we are ready
 	configuredMachineDir := cfg.Choria.MachineSourceDir

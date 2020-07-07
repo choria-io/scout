@@ -1,5 +1,5 @@
 [Unit]
-Description=The Choria Orchestrator Server
+Description=The Choria Scout Agent
 After=network.target
 
 [Service]
@@ -7,7 +7,7 @@ StandardOutput=syslog
 StandardError=syslog
 User=root
 Group=root
-ExecStart={{cpkg_bindir}}/{{cpkg_name}} server --config={{cpkg_etcdir}}/server.conf
+ExecStart={{cpkg_bindir}}/{{cpkg_name}} run --config={{cpkg_etcdir}}/scout.conf
 KillMode=process
 
 [Install]
