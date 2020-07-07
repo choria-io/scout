@@ -1,0 +1,15 @@
+[Unit]
+Description=The Choria Scout Monitoring Agent
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/sysconfig/{{cpkg_name}}-agent
+StandardOutput=syslog
+StandardError=syslog
+User=root
+Group=root
+ExecStart=/bin/sh -c "${COMMAND_PREFIX} {{cpkg_bindir}}/{{cpkg_name}} run --config={{cpkg_etcdir}}/scout.conf"
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

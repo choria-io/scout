@@ -5,3 +5,5 @@ scout-*-*-*
 *.rpm
 *.deb
 *.dsc
+*.src.rpm
+vendor

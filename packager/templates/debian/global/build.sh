@@ -9,8 +9,7 @@ SOURCE="{{cpkg_source_dir}}"
 cd {{cpkg_name}}-{{cpkg_version}}
 
 mv dist debian
-mv debian/server.service debian/{{cpkg_name}}.{{cpkg_name}}-server.service
-mv debian/broker.service debian/{{cpkg_name}}.{{cpkg_name}}-broker.service
+mv debian/server.service debian/{{cpkg_name}}.{{cpkg_name}}-agent.service
 
 cp "${SOURCE}"/LICENSE debian/copyright
 
