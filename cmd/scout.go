@@ -47,7 +47,7 @@ func Run() error {
 	scli.Flag("config", "Path to the configuration file").ExistingFileVar(&cfile)
 	scli.Flag("debug", "Enables debug level logging").BoolVar(&debug)
 
-	configureRunCommand(scli)
+	configureAgentCommand(scli)
 
 	go interruptWatcher()
 
@@ -55,6 +55,26 @@ func Run() error {
 	kingpin.MustParse(scli.Parse(os.Args[1:]))
 
 	wg.Wait()
+
+	return nil
+}
+
+func commonConfigure() error {
+	if debug {
+		log.Logger.SetLevel(logrus.DebugLevel)
+	}
+
+	if cfile == "" {
+		cfile = choria.UserConfig()
+	}
+
+	fw, err := choria.New(cfile)
+	if err != nil {
+		return err
+	}
+
+	fw.SetupLogging(debug)
+	log = fw.Logger("scout")
 
 	return nil
 }
@@ -70,7 +90,7 @@ func forcequit() {
 
 	<-time.NewTimer(grace).C
 
-	dumpGoRoutines()
+	dumpProfilingData()
 
 	log.Errorf("Forced shutdown triggered after %v", grace)
 
@@ -92,7 +112,7 @@ func interruptWatcher() {
 				cancel()
 
 			case syscall.SIGQUIT:
-				dumpGoRoutines()
+				dumpProfilingData()
 			}
 		case <-ctx.Done():
 			return
@@ -100,7 +120,7 @@ func interruptWatcher() {
 	}
 }
 
-func dumpGoRoutines() {
+func dumpProfilingData() {
 	mu.Lock()
 	defer mu.Unlock()
 

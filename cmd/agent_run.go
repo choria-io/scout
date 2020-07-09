@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/choria-io/go-choria/choria"
 	"github.com/choria-io/go-choria/config"
@@ -13,14 +14,14 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-type runCommand struct {
+type agentRunCommand struct {
 	jwt     string
 	pidfile string
 	clean   bool
 }
 
-func configureRunCommand(app *kingpin.Application) {
-	c := &runCommand{}
+func configureAgentRunCommand(app *kingpin.CmdClause) {
+	c := &agentRunCommand{}
 
 	run := app.Command("run", "Runs the Scout Server").Action(c.run)
 	run.Flag("provision", "Path to the provisioning JWT file").StringVar(&c.jwt)
@@ -28,7 +29,7 @@ func configureRunCommand(app *kingpin.Application) {
 	run.Flag("pid", "Write running PID to a file").StringVar(&c.pidfile)
 }
 
-func (c *runCommand) run(_ *kingpin.ParseContext) error {
+func (c *agentRunCommand) run(_ *kingpin.ParseContext) error {
 	defer wg.Done()
 
 	err := c.configure()
@@ -36,7 +37,7 @@ func (c *runCommand) run(_ *kingpin.ParseContext) error {
 		return err
 	}
 
-	log.Infof("Choria Scout version %s starting with configuration %s", bi.Version(), cfg.ConfigFile)
+	log.Infof("Choria Scout Agent version %s starting with configuration %s", bi.Version(), cfg.ConfigFile)
 
 	if c.pidfile != "" {
 		err := ioutil.WriteFile(c.pidfile, []byte(fmt.Sprintf("%d", os.Getpid())), 0644)
@@ -56,9 +57,7 @@ func (c *runCommand) run(_ *kingpin.ParseContext) error {
 		// instance.SetComponent("provision_mode_scout")
 	case false:
 		instance.DenyAgent("rpcutil")
-
-		// TODO: needs provisioner updates
-		// instance.SetComponent("scout")
+		instance.SetComponent("scout")
 	}
 
 	// prevent machines from starting till we are ready
@@ -79,6 +78,22 @@ func (c *runCommand) run(_ *kingpin.ParseContext) error {
 			return err
 		}
 
+		tags, err := scoutEntity.Tags()
+		if err != nil {
+			return err
+		}
+
+		// write tags as classes file
+		tf, err := ioutil.TempFile("", "")
+		if err != nil {
+			return err
+		}
+		defer os.Remove(tf.Name())
+
+		cfg.ClassesFile = tf.Name()
+		fmt.Fprint(tf, strings.Join(tags, "\n"))
+		tf.Close()
+
 		err = scoutEntity.Start(ctx, &wg, c.clean)
 		if err != nil {
 			return err
@@ -98,7 +113,7 @@ func (c *runCommand) run(_ *kingpin.ParseContext) error {
 	return nil
 }
 
-func (c *runCommand) configure() error {
+func (c *agentRunCommand) configure() error {
 	if c.jwt != "" {
 		bi.SetProvisionJWTFile(c.jwt)
 	}
@@ -123,6 +138,7 @@ func (c *runCommand) configure() error {
 	}
 
 	cfg.MainCollective = "scout"
+	cfg.Collectives = []string{"scout"}
 	cfg.ApplyBuildSettings(bi)
 	cfg.DisableSecurityProviderVerify = true
 	cfg.InitiatedByServer = true
