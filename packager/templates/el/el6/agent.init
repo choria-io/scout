@@ -28,7 +28,7 @@ EXTRA_OPTS=""
 # pull in sysconfig settings
 [ -e /etc/sysconfig/${prog} ] && . /etc/sysconfig/${prog}
 
-args="run --config=${conffile} --pid=${pidfile} ${EXTRA_OPTS}"
+args="agent run --config=${conffile} --pid=${pidfile} ${EXTRA_OPTS}"
 
 export GOMAXPROCS=${GOMAXPROCS:-2}
 
