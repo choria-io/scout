@@ -71,7 +71,7 @@ func (c *agentTriggerCommand) trigger(_ *kingpin.ParseContext) error {
 		return err
 	}
 
-	responses := make(map[string]scoutagent.TriggerReply, 0)
+	responses := make(map[string]scoutagent.TriggerReply)
 
 	stat, err := api.TriggerChecks(ctx, c.checks, c.ids, []string{}, c.classes, func(r *scoutclient.TriggerOutput) {
 		if !r.ResultDetails().OK() {

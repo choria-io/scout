@@ -71,7 +71,7 @@ func (c *agentMaintCommand) maint(_ *kingpin.ParseContext) error {
 		return err
 	}
 
-	responses := make(map[string]scoutagent.MaintenanceReply, 0)
+	responses := make(map[string]scoutagent.MaintenanceReply)
 
 	stat, err := api.PauseChecks(ctx, c.checks, c.ids, []string{}, c.classes, func(r *scoutclient.MaintenanceOutput) {
 		if !r.ResultDetails().OK() {

@@ -71,7 +71,7 @@ func (c *agentResumeCommand) resume(_ *kingpin.ParseContext) error {
 		return err
 	}
 
-	responses := make(map[string]scoutagent.ResumeReply, 0)
+	responses := make(map[string]scoutagent.ResumeReply)
 
 	stat, err := api.ResumeChecks(ctx, c.checks, c.ids, []string{}, c.classes, func(r *scoutclient.ResumeOutput) {
 		if !r.ResultDetails().OK() {
